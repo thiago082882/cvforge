@@ -1,0 +1,23 @@
+# Segredos — nunca commitar
+.env
+*.env
+!*.env.example
+local.properties
+*.keystore
+*.jks
+
+# Build
+build/
+.gradle/
+.kotlin/
+out/
+
+# IDE / SO
+.idea/
+*.iml
+.DS_Store
+
+# iOS gerado
+iosApp/iosApp.xcodeproj/
+iosApp/build/
+xcuserdata/

@@ -1,0 +1,40 @@
+# Gera o iosApp.xcodeproj:   brew install xcodegen && cd iosApp && xcodegen
+name: iosApp
+options:
+  bundleIdPrefix: com.cvforge
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO          # o Gradle precisa rodar dentro do build do Xcode
+    # Produção: troque por sua API (HTTPS). Em simulador, localhost funciona.
+    API_BASE_URL: "http://localhost:8080"
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources: [iosApp]
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: CVForge
+        CVForgeApiUrl: $(API_BASE_URL)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true         # permite http://localhost só no desenvolvimento
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cvforge.app
+        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+        OTHER_LDFLAGS: "$(inherited) -framework ComposeApp"
+    preBuildScripts:
+      - name: Compilar framework Kotlin
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
